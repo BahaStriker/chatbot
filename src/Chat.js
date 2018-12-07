@@ -5,10 +5,20 @@ const accessToken = "cd1162f2723a4b2b95599f254588f3fe";
 const client = new ApiAiClient({ accessToken });
 const ON_MESSAGE = "ON_MESSAGE";
 
-export const sendMessage = (text, sender) => ({
+export const sendMessage = (text, sender = "user") => ({
   type: ON_MESSAGE,
   payload: { text, sender }
 });
+
+// const initState = [{ text: "Hi" }];
+const messageReducer = (state = [], action) => {
+  switch (action.type) {
+    case ON_MESSAGE:
+      return [action.payload, ...state];
+    default:
+      return state;
+  }
+};
 
 const messageMiddleware = () => next => action => {
   next(action);
@@ -23,16 +33,6 @@ const messageMiddleware = () => next => action => {
       console.log(fulfillment);
       next(sendMessage(fulfillment.speech, "bot"));
     }
-  }
-};
-
-// const initState = [{ text: "Hi" }];
-const messageReducer = (state = [], action) => {
-  switch (action.type) {
-    case ON_MESSAGE:
-      return [action.payload, ...state];
-    default:
-      return state;
   }
 };
 
